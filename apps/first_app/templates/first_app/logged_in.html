@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{{like.first_name}} {{like.last_name}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <style type="text/css">
+        *{
+            padding: 10px;
+        }
+        h1{
+            margin-left: 10px;
+        }
+        div{
+           
+            text-align: center;
+        }
+        .table{
+            width: fit-content !important;
+            display: inline-block;
+            margin: auto;
+            border: 2px solid blue;
+        }
+        form div{
+            margin: 0px auto 0px auto;
+            width: 70%;
+        }
+        .jumbotron{
+            height: 100%;
+            margin-bottom: 0% !important;
+        }
+        .card{
+            width: 48%;
+            display: inline-block;
+            vertical-align: top;
+        }
+    </style> 
+</head>
+<body> 
+    {% load humanize %} 
+    <div class="jumbotron">
+        <h5 class="display-5">Welcome back! {{like.first_name}}</h5>
+        <a href="/logout">logout</a> |
+        <a href="/edit/{{like.id}}">Edit My Account</a>
+        {% if messages %}
+        {% for message in messages %}
+        <ul class="messages">  
+                <li {% if message.tag in message.tags %} class='text-danger lead {{message.tag}}'{% endif %}> {{message}} </li>     
+        </ul>
+        {% endfor %}
+        {% endif %}
+            <hr class="my-4">
+            <div class="card w-100" style="width: 18rem;">
+            <div class="card-body">
+                <h4 class="display-4">Quotes</h4>
+                {% for i in user %}
+                <table class="table table-dark">
+                    
+                    <tr>
+                        <td scope="col">{{i.item}} </td>
+                    </tr>
+                        <td scope="col">
+                            <form action="viewitem/{{i.user_post.id}}" method="post">
+                            {% csrf_token %}
+                            Posted by - <button type="submit" class="btn btn-link">{{i.user_post.first_name}}</button>
+                            </form>
+                        </td>
+                    <tr>
+                        <td scope="col">
+                        {% if like not in i.mes_liked.all %}
+                            <form action="/create3" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="item" value="{{i.id}}">
+                                <input type="hidden" name="user" value= "{{user.id}}">
+                                <button type="submit" class="btn btn-button">like</button>
+                            </form>
+                        {% else %}
+                                {% csrf_token %}
+                                <button type="disabled" class="btn btn-link">You Liked this Quote!</button>
+                        {% endif %}
+                        {% if i.user_post.id == like.id %}
+                            <form action="/delete" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="item" value="{{i.id}}">
+                                <input type="hidden" name="user" value= "{{i.userwish.id}}">
+                                <button type="submit" class="btn btn-link">delete</button>
+                            </form>
+                        {% else %}
+                                <button type="hidden" class="btn btn-link"></button>
+                        {% endif %}
+                        </td>
+                    </tr> 
+                </table>
+                {% endfor %}          
+            </div>
+            </div>
+            <hr class="my-4">
+            <div class="card text-white bg-secondary mb-3" style="width: 40rem;">
+            <div class="card-body">
+                <h4 class="display-6">Add a Quote!</h4>
+                <form action="/createpost" method="post">
+                    <div class="jumbotron">
+                        {% if messages %}
+                        {% for message in messages %}
+                        <ul class="messages">  
+                            <li {% if message.tag in message.tags %} class='text-danger lead {{message.tag}}'{% endif %}> {{message}} </li>     
+                        </ul>
+                        {% endfor %}
+                        {% endif %}
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <textarea type="text" name="post" class="form-control" aria-label="With textarea"></textarea>
+                            <button class="input-group-append" type="submit">Post</button>
+                        </div>
+                    </div>
+                </form> 
+            </div>
+        </div>
+    </div>
+</body>
+</html>
